@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/sprite-rocket.jpeg-a953757864006aa6efe8fe6516003731.stex"
+path="res://.import/Player1.png-1244db7a61398cc992fce2f0a5bc3cb6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://rocket/sprite-rocket.jpeg"
-dest_files=[ "res://.import/sprite-rocket.jpeg-a953757864006aa6efe8fe6516003731.stex" ]
+source_file="res://Assets/Player1.png"
+dest_files=[ "res://.import/Player1.png-1244db7a61398cc992fce2f0a5bc3cb6.stex" ]
 
 [params]
 
