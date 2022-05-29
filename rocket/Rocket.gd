@@ -19,6 +19,8 @@ var rng = RandomNumberGenerator.new()
 
 onready var target = $pointing
 
+var animation
+
 enum {
 	IDLE,
 	DASH
@@ -107,6 +109,17 @@ func _on_Tween_tween_completed(object, key):
 func _on_hurtboxArea_area_entered(area):
 	#print(area.name)
 	if area.name == 'hitboxArea':
+		$Player1.visible = false
+		$"Boom-Sheet".visible = true
+		animation = "Death"
+		get_node("AnimationPlayer").play(animation)
+		var t = Timer.new()
+		t.set_wait_time(1.6)
+		t.set_one_shot(true)
+		self.add_child(t)
+		t.start()
+		yield(t, "timeout")
+		$"Boom-Sheet".visible = false
 		queue_free()
 
 
