@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://rocket-player2/Rocket.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Boom-Sheet.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Player2.png" type="Texture" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
@@ -12,6 +13,50 @@ height = 0.0
 
 [sub_resource type="CapsuleShape2D" id=3]
 height = 6.0
+
+[sub_resource type="Animation" id=4]
+resource_name = "Death"
+length = 1.6
+step = 0.13
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Boom-Sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.13, 0.26, 0.39, 0.65, 0.91, 1.17, 1.43 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+}
+
+[sub_resource type="Animation" id=5]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Boom-Sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
 
 [node name="Rocket_p2" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -38,6 +83,16 @@ shape = SubResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 3 )
+
+[node name="Boom-Sheet" type="Sprite" parent="."]
+visible = false
+texture = ExtResource( 2 )
+hframes = 8
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Boom-Sheet")
+anims/Death = SubResource( 4 )
+anims/RESET = SubResource( 5 )
 
 [connection signal="tween_completed" from="Player2/Tween" to="." method="_on_Tween_tween_completed"]
 [connection signal="area_entered" from="hurtboxArea" to="." method="_on_hurtboxArea_area_entered"]

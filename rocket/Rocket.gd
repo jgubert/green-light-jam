@@ -109,18 +109,20 @@ func _on_Tween_tween_completed(object, key):
 func _on_hurtboxArea_area_entered(area):
 	#print(area.name)
 	if area.name == 'hitboxArea':
-		$Player1.visible = false
-		$"Boom-Sheet".visible = true
+		$Player1.visible = false #desativa sprite nave
+		set_physics_process(false) #desativa rotação idle_state
+		self.rotation_degrees = 0 #reseta rotação
+		$"Boom-Sheet".visible = true #ativa sprite explosão
 		animation = "Death"
-		get_node("AnimationPlayer").play(animation)
+		get_node("AnimationPlayer").play(animation) #toca animação de morte
 		var t = Timer.new()
-		t.set_wait_time(1.6)
+		t.set_wait_time(1.6) #wait time de 1.6s
 		t.set_one_shot(true)
 		self.add_child(t)
 		t.start()
 		yield(t, "timeout")
-		$"Boom-Sheet".visible = false
-		queue_free()
+		$"Boom-Sheet".visible = false #desativa sprite explosão
+		queue_free() #remove node
 
 
 func _on_hitboxArea_area_entered(area):
