@@ -1,42 +1,71 @@
 extends KinematicBody2D
 
+# variaveis para movimentacao
+# verificar quais nao estao sendo usadas
 export var MAX_DASH_FORCE = 1500
 export var ACCELERATION = 500
 export var FRICTION = 500
 export var DASH_FORCE = 0
 export var DIRECTION = 1
 
-var player = "player1"
-var velocity = Vector2()
+# definicoes de tamanho de tela
+var screen_limit_x = 640
+var screen_limit_y = 360
 
+var player = ""
+var velocity = Vector2()
 var shake_amount = 3
 var shake_speed = 0.2
-
 var current_pos = Vector2()
 var final_pos = Vector2()
 
 var rng = RandomNumberGenerator.new()
 
+# variaveis com os nodes do rocket
 onready var target = $pointing
+onready var sprite = $Sprite
+onready var collision_shape = $CollisionShape2D
+onready var hurtbox = $hurtboxArea/hurtbox
+onready var hitbox = $hitboxArea/hitbox
+onready var animation_player = $AnimationPlayer
+onready var death_timer = $DeathTimer
 
-var animation
+# sprites do player
+const sprite_player1 = preload("res://Assets/Player1.png")
+const sprite_player2 = preload("res://Assets/Player2.png")
+
+# node controller
+onready var controller = get_node("/root/sandbox/Controller")
+
+# sinais
+signal player_morreu(player)
 
 enum {
 	IDLE,
-	DASH
+	DASH,
+	BATTLE
 }
 
 var state = IDLE
+var animation
 
-		
-# Called when the node enters the scene tree for the first time.
+# Funcao _ready é chamada quando o node rocket é colocado na tela
 func _ready():
+	# Cria o rocket em uma posicao aleatoria na tela
 	rng.randomize()
 	randomize()
 	position = Vector2(
-		rng.randf_range(0, 800),
-		rng.randf_range(0, 600))
-
+		rng.randf_range(0, screen_limit_x),
+		rng.randf_range(0, screen_limit_y))
+	
+	# carrega o sprite do player correto
+	if player == "player1":
+		sprite.set_texture(sprite_player1)
+	elif player == "player2":
+		sprite.set_texture(sprite_player2)
+	
+	# conecta o sinal com o controller
+	connect("player_morreu", controller, "get_rocket_explosions", [player])
 
 func _physics_process(delta):
 	match state:
@@ -65,8 +94,8 @@ func idle_state(delta):
 	move()
 	
 	# CORRIGIR QUANDO O PLAYER SAI DA TELA
-	position.x = wrapf(position.x, 0, 800)
-	position.y = wrapf(position.y, 0, 600)
+	position.x = wrapf(position.x, 0, screen_limit_x)
+	position.y = wrapf(position.y, 0, screen_limit_y)
 	
 func dash_state(delta):
 	#print('DASH STATE')
@@ -107,25 +136,26 @@ func _on_Tween_tween_completed(object, key):
 
 
 func _on_hurtboxArea_area_entered(area):
-	#print(area.name)
+	print('HURTBOX ', player, ' ENTERED: ', area.name)
 	if area.name == 'hitboxArea':
-		$Player1.visible = false #desativa sprite nave
+		sprite.visible = false # desativa sprite nave
+		# a hitbox ainda estava matando o player na explosao
+		collision_shape.queue_free()
+		$hitboxArea.queue_free()	# destroi a area de hitbox
+		$hurtboxArea.queue_free()	# destroi a area de hurtbox
 		set_physics_process(false) #desativa rotação idle_state
 		self.rotation_degrees = 0 #reseta rotação
 		$"Boom-Sheet".visible = true #ativa sprite explosão
-		animation = "Death"
-		get_node("AnimationPlayer").play(animation) #toca animação de morte
-		var t = Timer.new()
-		t.set_wait_time(1.6) #wait time de 1.6s
-		t.set_one_shot(true)
-		self.add_child(t)
-		t.start()
-		yield(t, "timeout")
-		$"Boom-Sheet".visible = false #desativa sprite explosão
-		queue_free() #remove node
-
+		animation_player.play("Death")
+		death_timer.start()
+		#yield(death_timer, "timeout")
 
 func _on_hitboxArea_area_entered(area):
 	#print(area.name)
 	if area.name == 'hitboxArea':
 		print('BATALHA DE BOTOES')
+
+func _on_DeathTimer_timeout():
+	$"Boom-Sheet".visible = false #desativa sprite explosão
+	emit_signal("player_morreu")
+	queue_free() #remove node

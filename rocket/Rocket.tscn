@@ -5,14 +5,14 @@
 [ext_resource path="res://Assets/Player1.png" type="Texture" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 11, 9.5 )
+extents = Vector2( 10, 9 )
 
 [sub_resource type="CapsuleShape2D" id=2]
-radius = 6.0
+radius = 4.0
 height = 0.0
 
 [sub_resource type="CapsuleShape2D" id=3]
-height = 6.0
+height = 4.0
 
 [sub_resource type="Animation" id=4]
 resource_name = "Death"
@@ -49,10 +49,10 @@ tracks/0/keys = {
 [node name="Rocket" type="KinematicBody2D"]
 script = ExtResource( 2 )
 
-[node name="Player1" type="Sprite" parent="."]
+[node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 3 )
 
-[node name="Tween" type="Tween" parent="Player1"]
+[node name="Tween" type="Tween" parent="Sprite"]
 
 [node name="pointing" type="Position2D" parent="."]
 position = Vector2( 0, -19 )
@@ -60,13 +60,13 @@ position = Vector2( 0, -19 )
 [node name="hurtboxArea" type="Area2D" parent="."]
 
 [node name="hurtbox" type="CollisionShape2D" parent="hurtboxArea"]
-position = Vector2( 0, 4.5 )
+position = Vector2( 0, 4 )
 shape = SubResource( 1 )
 
 [node name="hitboxArea" type="Area2D" parent="."]
 
 [node name="hitbox" type="CollisionShape2D" parent="hitboxArea"]
-position = Vector2( 0, -12 )
+position = Vector2( 0, -11 )
 shape = SubResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -79,10 +79,15 @@ hframes = 8
 frame = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("../Player1")
+root_node = NodePath("../Sprite")
 anims/Death = SubResource( 4 )
 anims/RESET = SubResource( 5 )
 
-[connection signal="tween_completed" from="Player1/Tween" to="." method="_on_Tween_tween_completed"]
+[node name="DeathTimer" type="Timer" parent="."]
+wait_time = 1.6
+one_shot = true
+
+[connection signal="tween_completed" from="Sprite/Tween" to="." method="_on_Tween_tween_completed"]
 [connection signal="area_entered" from="hurtboxArea" to="." method="_on_hurtboxArea_area_entered"]
 [connection signal="area_entered" from="hitboxArea" to="." method="_on_hitboxArea_area_entered"]
+[connection signal="timeout" from="DeathTimer" to="." method="_on_DeathTimer_timeout"]
