@@ -47,3 +47,23 @@ func print_battle_debug():
 	print('## BATTLE ##')
 	print(fighter_1.player, ' : ', points_f1)
 	print(fighter_2.player, ' : ', points_f2)
+
+
+func _on_Timer_timeout():
+	if points_f1 > points_f2:
+		connect("loser",fighter_1, "result_battle", ["lose"])
+		connect("winner",fighter_2, "result_battle", ["win"])
+		emit_signal("loser")
+		emit_signal("winner")
+		queue_free()
+	elif points_f2 > points_f1:
+		connect("loser",fighter_2, "result_battle", ["lose"])
+		connect("winner",fighter_1, "result_battle", ["win"])
+		emit_signal("loser")
+		emit_signal("winner")
+		queue_free()
+	else:
+		connect("loser",fighter_1, "result_battle", ["lose"])
+		connect("loser",fighter_2, "result_battle", ["lose"])
+		emit_signal("loser")
+		queue_free()
