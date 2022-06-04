@@ -9,12 +9,17 @@ var points_f2 = 5
 signal winner
 signal loser
 
+onready var canvas = $CanvasLayer
+onready var battle_bar = $CanvasLayer/ProgressBar
+
 func _ready():
-	pass # Replace with function body.
+	battle_bar.set_global_position(Vector2(fighter_1.position.x - 10, fighter_1.position.y - 35))
 
 
 
 func _process(delta):
+	battle_bar.value = points_f1
+	
 	if Input.is_action_just_pressed(fighter_1.player):
 		points_f1 = points_f1 + 1
 		points_f2 = points_f2 - 1

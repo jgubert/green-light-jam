@@ -75,6 +75,6 @@ func create_fighter(fighter):
 	
 func debug_placar():
 	print('--------------------------------')
-	print('## PLACA ##')
+	print('## PLACAR ##')
 	print('player 1 - K: ', kills_list[0],' / D: ', deaths_list[0])
 	print('player 2 - K: ', kills_list[1],' / D: ', deaths_list[1])
