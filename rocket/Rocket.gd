@@ -21,6 +21,9 @@ var final_pos = Vector2()
 
 var rng = RandomNumberGenerator.new()
 
+# variavel para guardar o inimigo para a batalha. talvez nao seja usada
+var enemy
+
 # variaveis com os nodes do rocket
 onready var target = $pointing
 onready var sprite = $Sprite
@@ -39,6 +42,9 @@ onready var controller = get_node("/root/sandbox/Controller")
 
 # sinais
 signal player_morreu(player)
+signal player_matou(player)
+
+signal entering_battle(himself)
 
 enum {
 	IDLE,
@@ -65,7 +71,10 @@ func _ready():
 		sprite.set_texture(sprite_player2)
 	
 	# conecta o sinal com o controller
-	connect("player_morreu", controller, "get_rocket_explosions", [player])
+	connect("player_morreu", controller, "get_rocket_deaths", [player])
+	connect("player_matou", controller, "get_rocket_kill", [player])
+	
+	connect("entering_battle", controller, "create_fighter", [self])
 
 func _physics_process(delta):
 	match state:
@@ -73,6 +82,8 @@ func _physics_process(delta):
 			idle_state(delta)
 		DASH:
 			dash_state(delta)
+		BATTLE:
+			battle_state(delta)
 
 func idle_state(delta):
 	self.rotation_degrees += DIRECTION * 2
@@ -96,6 +107,9 @@ func idle_state(delta):
 	# CORRIGIR QUANDO O PLAYER SAI DA TELA
 	position.x = wrapf(position.x, 0, screen_limit_x)
 	position.y = wrapf(position.y, 0, screen_limit_y)
+	
+func battle_state(delta):
+	pass
 	
 func dash_state(delta):
 	#print('DASH STATE')
@@ -136,24 +150,42 @@ func _on_Tween_tween_completed(object, key):
 
 
 func _on_hurtboxArea_area_entered(area):
-	print('HURTBOX ', player, ' ENTERED: ', area.name)
+	#print('HURTBOX ', player, ' ENTERED: ', area.name)	# DEBUG
 	if area.name == 'hitboxArea':
-		sprite.visible = false # desativa sprite nave
-		# a hitbox ainda estava matando o player na explosao
-		collision_shape.queue_free()
-		$hitboxArea.queue_free()	# destroi a area de hitbox
-		$hurtboxArea.queue_free()	# destroi a area de hurtbox
-		set_physics_process(false) #desativa rotação idle_state
-		self.rotation_degrees = 0 #reseta rotação
-		$"Boom-Sheet".visible = true #ativa sprite explosão
-		animation_player.play("Death")
-		death_timer.start()
-		#yield(death_timer, "timeout")
+		explode()
 
+
+func explode():
+	sprite.visible = false # desativa sprite nave
+	# a hitbox ainda estava matando o player na explosao
+	collision_shape.queue_free()
+	$CollisionShape2D2.queue_free()
+	$hitboxArea.queue_free()	# destroi a area de hitbox
+	$hurtboxArea.queue_free()	# destroi a area de hurtbox
+	set_physics_process(false) #desativa rotação idle_state
+	self.rotation_degrees = 0 #reseta rotação
+	$"Boom-Sheet".visible = true #ativa sprite explosão
+	animation_player.play("Death")
+	death_timer.start()
+	
 func _on_hitboxArea_area_entered(area):
-	#print(area.name)
 	if area.name == 'hitboxArea':
-		print('BATALHA DE BOTOES')
+		enemy = area.get_parent()
+		if enemy != null:
+			emit_signal("entering_battle")
+			state = BATTLE
+			print(player, ' entrou em batalha.')
+	if area.name == 'hurtboxArea':
+		emit_signal("player_matou")
+		
+func result_battle(result):
+	if result == "lose":
+		explode()
+	if result == "win":
+		emit_signal("player_matou")
+		state = IDLE
+		
+		
 
 func _on_DeathTimer_timeout():
 	$"Boom-Sheet".visible = false #desativa sprite explosão
