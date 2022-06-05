@@ -95,7 +95,6 @@ func idle_state(delta):
 	
 	
 	if Input.is_action_pressed(player):
-		#shake()	# shake tá deixando o dash estranho
 		if DASH_FORCE < MAX_DASH_FORCE:
 			DASH_FORCE = DASH_FORCE + 50
 			# toca a animacao de charging
@@ -106,7 +105,7 @@ func idle_state(delta):
 				charging_sprite.visible = false
 				charging_animation.play("stop")
 			#toca animacao de dash carregado no max
-			pass
+			shake()
 	
 	if Input.is_action_just_released(player):
 		state = DASH
@@ -132,27 +131,17 @@ func dash_state(delta):
 	
 	charging_sprite.visible = false
 	charging_animation.play("stop")
+	
+	sprite.offset = Vector2(0,0)	# reseta offset do sprite
 
 func move():
 	velocity = move_and_slide(velocity)
 
 func shake():
-	current_pos = self.position
-	
-	final_pos = Vector2(
-		current_pos.x + (rng.randf_range(-1.0, 1.0) * shake_amount),
-		current_pos.y + (rng.randf_range(-1.0, 1.0) * shake_amount))
-	print(final_pos)
-	$Sprite/Tween.interpolate_property(
-		self,
-		"position",
-		current_pos,
-		final_pos,
-		shake_speed,
-		Tween.TRANS_LINEAR,
-		Tween.EASE_IN_OUT
+	sprite.offset = Vector2(
+		rng.randf_range(-1, 1), 
+		rng.randf_range(-1, 1)
 	)
-	$Sprite/Tween.start()
 	
 
 func _on_Tween_tween_completed(object, key):	
