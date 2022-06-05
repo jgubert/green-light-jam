@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Assets/Boom-Sheet.png" type="Texture" id=1]
 [ext_resource path="res://rocket/Rocket.gd" type="Script" id=2]
@@ -11,6 +11,10 @@ extents = Vector2( 10, 9 )
 [sub_resource type="CapsuleShape2D" id=2]
 radius = 4.0
 height = 2.0
+
+[sub_resource type="CapsuleShape2D" id=9]
+radius = 11.0
+height = 10.0
 
 [sub_resource type="CapsuleShape2D" id=3]
 radius = 9.0
@@ -107,6 +111,13 @@ shape = SubResource( 1 )
 position = Vector2( 0, -11 )
 rotation = 1.5708
 shape = SubResource( 2 )
+
+[node name="get_powerup" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="get_powerup"]
+shape = SubResource( 9 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 3 )
