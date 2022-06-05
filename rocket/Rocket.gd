@@ -32,6 +32,8 @@ onready var hurtbox = $hurtboxArea/hurtbox
 onready var hitbox = $hitboxArea/hitbox
 onready var animation_player = $AnimationPlayer
 onready var death_timer = $DeathTimer
+onready var charging_sprite = $charging
+onready var charging_animation = $charging/charging_player
 
 # sprites do player
 const sprite_player1 = preload("res://Assets/Player1.png")
@@ -96,6 +98,15 @@ func idle_state(delta):
 		#shake()	# shake tá deixando o dash estranho
 		if DASH_FORCE < MAX_DASH_FORCE:
 			DASH_FORCE = DASH_FORCE + 50
+			# toca a animacao de charging
+			charging_sprite.visible = true
+			charging_animation.play("charging")
+		else:
+			if charging_sprite.visible == true:
+				charging_sprite.visible = false
+				charging_animation.play("stop")
+			#toca animacao de dash carregado no max
+			pass
 	
 	if Input.is_action_just_released(player):
 		state = DASH
@@ -113,17 +124,18 @@ func battle_state(delta):
 	
 func dash_state(delta):
 	#print('DASH STATE')
-	
 	velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
 	#velocity = Vector2(DASH_FORCE, 0).rotated(rotation-90)
 	DASH_FORCE = 0
 	state = IDLE
 	DIRECTION = -DIRECTION
+	
+	charging_sprite.visible = false
+	charging_animation.play("stop")
 
 func move():
 	velocity = move_and_slide(velocity)
 
-	
 func shake():
 	current_pos = self.position
 	
@@ -140,7 +152,6 @@ func shake():
 		Tween.TRANS_LINEAR,
 		Tween.EASE_IN_OUT
 	)
-	
 	$Sprite/Tween.start()
 	
 
@@ -148,12 +159,10 @@ func _on_Tween_tween_completed(object, key):
 	pass
 	#shake()
 
-
 func _on_hurtboxArea_area_entered(area):
 	#print('HURTBOX ', player, ' ENTERED: ', area.name)	# DEBUG
 	if area.name == 'hitboxArea':
 		explode()
-
 
 func explode():
 	sprite.visible = false # desativa sprite nave
@@ -184,8 +193,6 @@ func result_battle(result):
 	if result == "win":
 		emit_signal("player_matou")
 		state = IDLE
-		
-		
 
 func _on_DeathTimer_timeout():
 	$"Boom-Sheet".visible = false #desativa sprite explosão

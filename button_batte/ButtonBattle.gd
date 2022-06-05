@@ -13,7 +13,12 @@ onready var canvas = $CanvasLayer
 onready var battle_bar = $CanvasLayer/ProgressBar
 
 func _ready():
-	battle_bar.set_global_position(Vector2(fighter_1.position.x - 10, fighter_1.position.y - 35))
+	battle_bar.set_global_position(Vector2(fighter_1.position.x - 35, fighter_1.position.y - 35))
+	# Ajusta o jogador de acordo com a posição
+	if fighter_1.position.x > fighter_2.position.x:
+		var fighter_aux = fighter_1
+		fighter_1 = fighter_2
+		fighter_2 = fighter_aux
 
 
 
