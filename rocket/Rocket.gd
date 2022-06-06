@@ -36,8 +36,8 @@ onready var charging_sprite = $charging
 onready var charging_animation = $charging/charging_player
 
 # sprites do player
-const sprite_player1 = preload("res://Assets/Player1.png")
-const sprite_player2 = preload("res://Assets/Player2.png")
+const sprite_player1 = preload("res://Assets/Players/Player1.png")
+const sprite_player2 = preload("res://Assets/Players/Player2.png")
 
 # node controller
 onready var controller = get_node("/root/sandbox/Controller")
