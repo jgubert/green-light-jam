@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Assets/Boom-Sheet.png" type="Texture" id=1]
 [ext_resource path="res://rocket/Rocket.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Player1.png" type="Texture" id=3]
 [ext_resource path="res://Assets/charging.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Charge-Sheet.png" type="Texture" id=5]
 
 [sub_resource type="RectangleShape2D" id=10]
 extents = Vector2( 11, 8 )
@@ -17,6 +18,56 @@ height = 10.0
 
 [sub_resource type="CapsuleShape2D" id=3]
 height = 2.0
+
+[sub_resource type="Animation" id=13]
+resource_name = "Charged"
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Charge-Sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 4, 5, 6, 7 ]
+}
+
+[sub_resource type="Animation" id=12]
+resource_name = "Charging"
+length = 0.6
+step = 0.15
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Charge-Sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.15, 0.3, 0.45 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3 ]
+}
+
+[sub_resource type="Animation" id=14]
+resource_name = "Dash"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("../Charge-Sheet:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 8, 9, 10, 11 ]
+}
 
 [sub_resource type="Animation" id=4]
 resource_name = "Death"
@@ -48,6 +99,18 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ 1 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Charge-Sheet:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
 }
 
 [sub_resource type="CapsuleShape2D" id=6]
@@ -125,8 +188,18 @@ texture = ExtResource( 1 )
 hframes = 8
 frame = 1
 
+[node name="Charge-Sheet" type="Sprite" parent="."]
+visible = false
+position = Vector2( 0, 0.5 )
+texture = ExtResource( 5 )
+hframes = 4
+vframes = 3
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Sprite")
+anims/Charged = SubResource( 13 )
+anims/Charging = SubResource( 12 )
+anims/Dash = SubResource( 14 )
 anims/Death = SubResource( 4 )
 anims/RESET = SubResource( 5 )
 

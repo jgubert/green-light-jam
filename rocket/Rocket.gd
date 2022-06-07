@@ -32,7 +32,7 @@ onready var hurtbox = $hurtboxArea/hurtbox
 onready var hitbox = $hitboxArea/hitbox
 onready var animation_player = $AnimationPlayer
 onready var death_timer = $DeathTimer
-onready var charging_sprite = $charging
+onready var charging_sprite = $"Charge-Sheet"
 onready var charging_animation = $charging/charging_player
 
 # sprites do player
@@ -116,16 +116,16 @@ func idle_state(delta):
 			DASH_FORCE = DASH_FORCE + 50
 			# toca a animacao de charging
 			charging_sprite.visible = true
-			charging_animation.play("charging")
+			animation_player.play("Charging")
 		else:
 			if charging_sprite.visible == true:
-				charging_sprite.visible = false
-				charging_animation.play("stop")
+				animation_player.play("Charged")
 			#toca animacao de dash carregado no max
 			shake()
 	
 	if Input.is_action_just_released(player):
 		state = DASH
+		animation_player.play("Dash")
 		
 	#debug
 	#velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
