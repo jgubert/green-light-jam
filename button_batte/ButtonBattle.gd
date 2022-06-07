@@ -20,16 +20,14 @@ func _ready():
 		fighter_1 = fighter_2
 		fighter_2 = fighter_aux
 
-
-
 func _process(delta):
-	if !is_instance_valid(fighter_1):
-		connect("winner",fighter_2, "result_battle", ["win"])
-		emit_signal("winner")
+	if !is_instance_valid(fighter_1) and !is_instance_valid(fighter_2):
+		queue_free()
+	elif !is_instance_valid(fighter_1):
+		fighter_2.back_to_idle()
 		queue_free()
 	elif !is_instance_valid(fighter_2):
-		connect("winner",fighter_1, "result_battle", ["win"])
-		emit_signal("winner")
+		fighter_1.back_to_idle()
 		queue_free()
 	battle_bar.value = points_f1
 	
@@ -62,7 +60,6 @@ func print_battle_debug():
 	print('## BATTLE ##')
 	print(fighter_1.player, ' : ', points_f1)
 	print(fighter_2.player, ' : ', points_f2)
-
 
 func _on_Timer_timeout():
 	if points_f1 > points_f2:

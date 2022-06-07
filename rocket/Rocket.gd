@@ -1,10 +1,9 @@
 extends KinematicBody2D
 
 # variaveis para movimentacao
-# verificar quais nao estao sendo usadas
 export var MAX_DASH_FORCE = 1500
-export var ACCELERATION = 500
-export var FRICTION = 500
+#export var ACCELERATION = 500	# variavel nao esta sendo usada
+#export var FRICTION = 500	# variavel nao esta sendo usada
 export var DASH_FORCE = 0
 export var DIRECTION = 1
 
@@ -14,15 +13,15 @@ var screen_limit_y = 360
 
 var player = ""
 var velocity = Vector2()
-var shake_amount = 3
-var shake_speed = 0.2
-var current_pos = Vector2()
-var final_pos = Vector2()
+#var shake_amount = 3	# variavel nao esta sendo usada
+#var shake_speed = 0.2	# variavel nao esta sendo usada
+#var current_pos = Vector2()	# variavel nao esta sendo usada
+#var final_pos = Vector2()	# variavel nao esta sendo usada
 var protegido = false
 
 var rng = RandomNumberGenerator.new()
 
-# variavel para guardar o inimigo para a batalha. talvez nao seja usada
+# variavel para guardar o inimigo para a batalha.
 var enemy
 
 # variaveis com os nodes do rocket
@@ -181,7 +180,7 @@ func explode():
 	death_timer.start()
 	
 func _on_hitboxArea_area_entered(area):
-	print(area.name, protegido)
+	#print(area.name, protegido)
 	enemy = area.get_parent()
 	if area.name == 'hitboxArea' and !protegido and !enemy.protegido:
 		enemy = area.get_parent()
@@ -200,6 +199,10 @@ func result_battle(result):
 	if result == "win":
 		emit_signal("player_matou")
 		state = IDLE
+
+# pra quando buga a batalha, sai do estado de batalha e volta pro idle
+func back_to_idle():
+	state = IDLE
 
 func _on_DeathTimer_timeout():
 	$"Boom-Sheet".visible = false #desativa sprite explosão
