@@ -5,19 +5,17 @@
 [ext_resource path="res://Assets/Player1.png" type="Texture" id=3]
 [ext_resource path="res://Assets/charging.png" type="Texture" id=4]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 10, 9 )
+[sub_resource type="RectangleShape2D" id=10]
+extents = Vector2( 11, 8 )
 
-[sub_resource type="CapsuleShape2D" id=2]
-radius = 4.0
-height = 2.0
+[sub_resource type="ConvexPolygonShape2D" id=11]
+points = PoolVector2Array( 0, -5, 9, 4.9, -9, 4.9 )
 
 [sub_resource type="CapsuleShape2D" id=9]
 radius = 11.0
 height = 10.0
 
 [sub_resource type="CapsuleShape2D" id=3]
-radius = 9.0
 height = 2.0
 
 [sub_resource type="Animation" id=4]
@@ -94,8 +92,6 @@ script = ExtResource( 2 )
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 3 )
 
-[node name="Tween" type="Tween" parent="Sprite"]
-
 [node name="pointing" type="Position2D" parent="."]
 position = Vector2( 0, -19 )
 
@@ -103,16 +99,16 @@ position = Vector2( 0, -19 )
 
 [node name="hurtbox" type="CollisionShape2D" parent="hurtboxArea"]
 position = Vector2( 0, 3 )
-shape = SubResource( 1 )
+shape = SubResource( 10 )
 
 [node name="hitboxArea" type="Area2D" parent="."]
 
 [node name="hitbox" type="CollisionShape2D" parent="hitboxArea"]
 position = Vector2( 0, -11 )
-rotation = 1.5708
-shape = SubResource( 2 )
+shape = SubResource( 11 )
 
 [node name="get_powerup" type="Area2D" parent="."]
+visible = false
 collision_layer = 2
 collision_mask = 2
 
@@ -121,6 +117,7 @@ shape = SubResource( 9 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 3 )
+disabled = true
 
 [node name="Boom-Sheet" type="Sprite" parent="."]
 visible = false
@@ -141,6 +138,7 @@ one_shot = true
 position = Vector2( 0, -11 )
 rotation = 1.5708
 shape = SubResource( 6 )
+disabled = true
 
 [node name="charging" type="Sprite" parent="."]
 visible = false
@@ -151,7 +149,6 @@ hframes = 6
 anims/RESET = SubResource( 7 )
 anims/charging = SubResource( 8 )
 
-[connection signal="tween_completed" from="Sprite/Tween" to="." method="_on_Tween_tween_completed"]
 [connection signal="area_entered" from="hurtboxArea" to="." method="_on_hurtboxArea_area_entered"]
 [connection signal="area_entered" from="hitboxArea" to="." method="_on_hitboxArea_area_entered"]
 [connection signal="timeout" from="DeathTimer" to="." method="_on_DeathTimer_timeout"]

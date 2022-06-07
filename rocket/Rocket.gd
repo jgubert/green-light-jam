@@ -18,6 +18,7 @@ var shake_amount = 3
 var shake_speed = 0.2
 var current_pos = Vector2()
 var final_pos = Vector2()
+var protegido = false
 
 var rng = RandomNumberGenerator.new()
 
@@ -38,6 +39,12 @@ onready var charging_animation = $charging/charging_player
 # sprites do player
 const sprite_player1 = preload("res://Assets/Players/Player1.png")
 const sprite_player2 = preload("res://Assets/Players/Player2.png")
+const sprite_player3 = preload("res://Assets/Players/Player3.png")
+const sprite_player4 = preload("res://Assets/Players/Player4.png")
+const sprite_player5 = preload("res://Assets/Players/Player5.png")
+const sprite_player6 = preload("res://Assets/Players/Player6.png")
+const sprite_player7 = preload("res://Assets/Players/Player7.png")
+const sprite_player8 = preload("res://Assets/Players/Player8.png")
 
 # node controller
 onready var controller = get_node("/root/sandbox/Controller")
@@ -71,11 +78,22 @@ func _ready():
 		sprite.set_texture(sprite_player1)
 	elif player == "player2":
 		sprite.set_texture(sprite_player2)
+	elif player == "player3":
+		sprite.set_texture(sprite_player3)
+	elif player == "player4":
+		sprite.set_texture(sprite_player4)
+	elif player == "player5":
+		sprite.set_texture(sprite_player5)
+	elif player == "player6":
+		sprite.set_texture(sprite_player6)
+	elif player == "player7":
+		sprite.set_texture(sprite_player7)
+	elif player == "player8":
+		sprite.set_texture(sprite_player8)
 	
 	# conecta o sinal com o controller
 	connect("player_morreu", controller, "get_rocket_deaths", [player])
 	connect("player_matou", controller, "get_rocket_kill", [player])
-	
 	connect("entering_battle", controller, "create_fighter", [self])
 
 func _physics_process(delta):
@@ -144,13 +162,9 @@ func shake():
 	)
 	
 
-func _on_Tween_tween_completed(object, key):	
-	pass
-	#shake()
-
 func _on_hurtboxArea_area_entered(area):
 	#print('HURTBOX ', player, ' ENTERED: ', area.name)	# DEBUG
-	if area.name == 'hitboxArea':
+	if area.name == 'hitboxArea' and !protegido:
 		explode()
 
 func explode():
@@ -167,12 +181,16 @@ func explode():
 	death_timer.start()
 	
 func _on_hitboxArea_area_entered(area):
-	if area.name == 'hitboxArea':
+	print(area.name, protegido)
+	enemy = area.get_parent()
+	if area.name == 'hitboxArea' and !protegido and !enemy.protegido:
 		enemy = area.get_parent()
 		if enemy != null:
 			emit_signal("entering_battle")
 			state = BATTLE
 			print(player, ' entrou em batalha.')
+	elif area.name == 'hitboxArea' and protegido:
+		emit_signal("player_matou")
 	if area.name == 'hurtboxArea':
 		emit_signal("player_matou")
 		
