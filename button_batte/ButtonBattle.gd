@@ -20,19 +20,27 @@ func _ready():
 		fighter_1 = fighter_2
 		fighter_2 = fighter_aux
 
-
-
 func _process(delta):
+	if !is_instance_valid(fighter_1) and !is_instance_valid(fighter_2):
+		queue_free()
+	elif !is_instance_valid(fighter_1):
+		fighter_2.back_to_idle()
+		queue_free()
+	elif !is_instance_valid(fighter_2):
+		fighter_1.back_to_idle()
+		queue_free()
 	battle_bar.value = points_f1
 	
-	if Input.is_action_just_pressed(fighter_1.player):
-		points_f1 = points_f1 + 1
-		points_f2 = points_f2 - 1
-		print_battle_debug()
-	if Input.is_action_just_pressed(fighter_2.player):
-		points_f1 = points_f1 - 1
-		points_f2 = points_f2 + 1
-		print_battle_debug()
+	if is_instance_valid(fighter_1):
+		if Input.is_action_just_pressed(fighter_1.player):
+			points_f1 = points_f1 + 1
+			points_f2 = points_f2 - 1
+			print_battle_debug()
+	if is_instance_valid(fighter_2):
+		if Input.is_action_just_pressed(fighter_2.player):
+			points_f1 = points_f1 - 1
+			points_f2 = points_f2 + 1
+			print_battle_debug()
 	
 	if points_f1 == 0:
 		connect("loser",fighter_1, "result_battle", ["lose"])
@@ -52,7 +60,6 @@ func print_battle_debug():
 	print('## BATTLE ##')
 	print(fighter_1.player, ' : ', points_f1)
 	print(fighter_2.player, ' : ', points_f2)
-
 
 func _on_Timer_timeout():
 	if points_f1 > points_f2:

@@ -1,10 +1,9 @@
 extends KinematicBody2D
 
 # variaveis para movimentacao
-# verificar quais nao estao sendo usadas
 export var MAX_DASH_FORCE = 1500
-export var ACCELERATION = 500
-export var FRICTION = 500
+#export var ACCELERATION = 500	# variavel nao esta sendo usada
+#export var FRICTION = 500	# variavel nao esta sendo usada
 export var DASH_FORCE = 0
 export var DIRECTION = 1
 
@@ -14,14 +13,15 @@ var screen_limit_y = 360
 
 var player = ""
 var velocity = Vector2()
-var shake_amount = 3
-var shake_speed = 0.2
-var current_pos = Vector2()
-var final_pos = Vector2()
+#var shake_amount = 3	# variavel nao esta sendo usada
+#var shake_speed = 0.2	# variavel nao esta sendo usada
+#var current_pos = Vector2()	# variavel nao esta sendo usada
+#var final_pos = Vector2()	# variavel nao esta sendo usada
+var protegido = false
 
 var rng = RandomNumberGenerator.new()
 
-# variavel para guardar o inimigo para a batalha. talvez nao seja usada
+# variavel para guardar o inimigo para a batalha.
 var enemy
 
 # variaveis com os nodes do rocket
@@ -32,13 +32,18 @@ onready var hurtbox = $hurtboxArea/hurtbox
 onready var hitbox = $hitboxArea/hitbox
 onready var animation_player = $AnimationPlayer
 onready var death_timer = $DeathTimer
-onready var charging_sprite = $charging
+onready var charging_sprite = $"Charge-Sheet"
 onready var charging_animation = $charging/charging_player
-onready var charging_particle = $ChargingParticles2D
 
 # sprites do player
 const sprite_player1 = preload("res://Assets/Players/Player1.png")
 const sprite_player2 = preload("res://Assets/Players/Player2.png")
+const sprite_player3 = preload("res://Assets/Players/Player3.png")
+const sprite_player4 = preload("res://Assets/Players/Player4.png")
+const sprite_player5 = preload("res://Assets/Players/Player5.png")
+const sprite_player6 = preload("res://Assets/Players/Player6.png")
+const sprite_player7 = preload("res://Assets/Players/Player7.png")
+const sprite_player8 = preload("res://Assets/Players/Player8.png")
 
 # node controller
 onready var controller = get_node("/root/sandbox/Controller")
@@ -72,11 +77,22 @@ func _ready():
 		sprite.set_texture(sprite_player1)
 	elif player == "player2":
 		sprite.set_texture(sprite_player2)
+	elif player == "player3":
+		sprite.set_texture(sprite_player3)
+	elif player == "player4":
+		sprite.set_texture(sprite_player4)
+	elif player == "player5":
+		sprite.set_texture(sprite_player5)
+	elif player == "player6":
+		sprite.set_texture(sprite_player6)
+	elif player == "player7":
+		sprite.set_texture(sprite_player7)
+	elif player == "player8":
+		sprite.set_texture(sprite_player8)
 	
 	# conecta o sinal com o controller
 	connect("player_morreu", controller, "get_rocket_deaths", [player])
 	connect("player_matou", controller, "get_rocket_kill", [player])
-	
 	connect("entering_battle", controller, "create_fighter", [self])
 
 func _physics_process(delta):
@@ -100,23 +116,16 @@ func idle_state(delta):
 			DASH_FORCE = DASH_FORCE + 50
 			# toca a animacao de charging
 			charging_sprite.visible = true
-			charging_animation.play("charging")
-			
-			charging_particle.emitting = true
-			
+			animation_player.play("Charging")
 		else:
 			if charging_sprite.visible == true:
-				charging_sprite.visible = false
-				charging_animation.play("stop")
-				
-				charging_particle.emitting = false
+				animation_player.play("Charged")
 			#toca animacao de dash carregado no max
 			shake()
 	
 	if Input.is_action_just_released(player):
 		state = DASH
-		$RandomizeAudio.play()
-		charging_particle.emitting = false
+		animation_player.play("Dash")
 		
 	#debug
 	#velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
@@ -152,13 +161,9 @@ func shake():
 	)
 	
 
-func _on_Tween_tween_completed(object, key):	
-	pass
-	#shake()
-
 func _on_hurtboxArea_area_entered(area):
 	#print('HURTBOX ', player, ' ENTERED: ', area.name)	# DEBUG
-	if area.name == 'hitboxArea':
+	if area.name == 'hitboxArea' and !protegido:
 		explode()
 
 func explode():
@@ -172,16 +177,19 @@ func explode():
 	self.rotation_degrees = 0 #reseta rotação
 	$"Boom-Sheet".visible = true #ativa sprite explosão
 	animation_player.play("Death")
-	$Explosion.play()
 	death_timer.start()
 	
 func _on_hitboxArea_area_entered(area):
-	if area.name == 'hitboxArea':
+	#print(area.name, protegido)
+	enemy = area.get_parent()
+	if area.name == 'hitboxArea' and !protegido and !enemy.protegido:
 		enemy = area.get_parent()
 		if enemy != null:
 			emit_signal("entering_battle")
 			state = BATTLE
 			print(player, ' entrou em batalha.')
+	elif area.name == 'hitboxArea' and protegido:
+		emit_signal("player_matou")
 	if area.name == 'hurtboxArea':
 		emit_signal("player_matou")
 		
@@ -191,6 +199,10 @@ func result_battle(result):
 	if result == "win":
 		emit_signal("player_matou")
 		state = IDLE
+
+# pra quando buga a batalha, sai do estado de batalha e volta pro idle
+func back_to_idle():
+	state = IDLE
 
 func _on_DeathTimer_timeout():
 	$"Boom-Sheet".visible = false #desativa sprite explosão
