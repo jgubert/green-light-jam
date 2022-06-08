@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Sounds/RandomizeAudio.gd" type="Script" id=1]
+[ext_resource path="res://Sounds/Dash 3-[AudioTrimmer.com].mp3" type="AudioStream" id=2]
+
+[node name="RandomizeAudio" type="AudioStreamPlayer2D"]
+stream = ExtResource( 2 )
+script = ExtResource( 1 )

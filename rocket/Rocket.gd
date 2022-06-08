@@ -34,6 +34,7 @@ onready var animation_player = $AnimationPlayer
 onready var death_timer = $DeathTimer
 onready var charging_sprite = $charging
 onready var charging_animation = $charging/charging_player
+onready var charging_particle = $ChargingParticles2D
 
 # sprites do player
 const sprite_player1 = preload("res://Assets/Players/Player1.png")
@@ -100,15 +101,22 @@ func idle_state(delta):
 			# toca a animacao de charging
 			charging_sprite.visible = true
 			charging_animation.play("charging")
+			
+			charging_particle.emitting = true
+			
 		else:
 			if charging_sprite.visible == true:
 				charging_sprite.visible = false
 				charging_animation.play("stop")
+				
+				charging_particle.emitting = false
 			#toca animacao de dash carregado no max
 			shake()
 	
 	if Input.is_action_just_released(player):
 		state = DASH
+		$RandomizeAudio.play()
+		charging_particle.emitting = false
 		
 	#debug
 	#velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
@@ -164,6 +172,7 @@ func explode():
 	self.rotation_degrees = 0 #reseta rotação
 	$"Boom-Sheet".visible = true #ativa sprite explosão
 	animation_player.play("Death")
+	$Explosion.play()
 	death_timer.start()
 	
 func _on_hitboxArea_area_entered(area):
