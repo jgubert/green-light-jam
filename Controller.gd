@@ -27,17 +27,24 @@ onready var powerup_escudo = preload("res://power_ups/powerup_escudo.tscn")
 
 onready var level = get_node("/root/sandbox")
 onready var timer_powerup = get_node("/root/sandbox/Timer_PowerUp")
+onready var ui = get_node("/root/sandbox/UI_score_e_cronometro")
 
 # variavel armazena o powerup que estiver na tela
 var pu_choosed
 var choose_powerup
 
 var rng = RandomNumberGenerator.new()
+var tempo_level = 20
 
 signal starting_battle_controller(starter)
+signal set_ui_timer(tempo)
+signal atualiza_placar(deaths_list, kills_list)
 
 func _ready():
 	reset_timer_powerup()
+	connect("set_ui_timer", ui, "set_tempo_level", [tempo_level])
+	emit_signal("set_ui_timer")
+	connect("atualiza_placar", ui, "atualiza_placar", [deaths_list, kills_list])
 
 func reset_timer_powerup():
 	rng.randomize()
@@ -128,6 +135,7 @@ func get_rocket_deaths(player_dead):
 		pass
 	
 	debug_placar()
+	emit_signal("atualiza_placar")
 
 func get_rocket_kill(killer):
 	if killer == "player1":
@@ -170,7 +178,7 @@ func _on_Timer_PowerUp_timeout():
 	rng.randomize()
 	pu_choosed.position = Vector2(
 		rng.randf_range(0, screen_limit_x),
-		rng.randf_range(0, screen_limit_y)
+		rng.randf_range(64, screen_limit_y)
 	)
 	level.add_child(pu_choosed)
 
@@ -185,3 +193,34 @@ func pegaram_powerup(player):
 		
 		reset_timer_powerup()
 	
+func acabou_o_level():
+	print("ACABOU O LEVEL")
+	var campeao_pontos = 0
+	var campeao_player = ''
+	if campeao_pontos < (kills_list[0] - deaths_list[0]):
+		campeao_pontos = kills_list[0] - deaths_list[0]
+		campeao_player = 'player1'
+	elif campeao_pontos < (kills_list[1] - deaths_list[1]):
+		campeao_pontos = kills_list[1] - deaths_list[1]
+		campeao_player = 'player2'
+	elif campeao_pontos < (kills_list[2] - deaths_list[2]):
+		campeao_pontos = kills_list[2] - deaths_list[2]
+		campeao_player = 'player3'
+	elif campeao_pontos < (kills_list[3] - deaths_list[3]):
+		campeao_pontos = kills_list[3] - deaths_list[3]
+		campeao_player = 'player4'
+	elif campeao_pontos < (kills_list[4] - deaths_list[4]):
+		campeao_pontos = kills_list[4] - deaths_list[4]
+		campeao_player = 'player5'
+	elif campeao_pontos < (kills_list[5] - deaths_list[5]):
+		campeao_pontos = kills_list[5] - deaths_list[5]
+		campeao_player = 'player6'
+	elif campeao_pontos < (kills_list[6] - deaths_list[6]):
+		campeao_pontos = kills_list[6] - deaths_list[6]
+		campeao_player = 'player7'
+	elif campeao_pontos < (kills_list[7] - deaths_list[7]):
+		campeao_pontos = kills_list[7] - deaths_list[7]
+		campeao_player = 'player8'
+		
+	print('CAMPEAO: ', campeao_player)
+	print('COM ', campeao_pontos, ' pontos')

@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Assets/Background.png" type="Texture" id=1]
+[ext_resource path="res://UI/UI_score_e_cronometro.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Controller.gd" type="Script" id=3]
 
 [node name="sandbox" type="Node2D"]
@@ -13,5 +14,7 @@ texture = ExtResource( 1 )
 script = ExtResource( 3 )
 
 [node name="Timer_PowerUp" type="Timer" parent="."]
+
+[node name="UI_score_e_cronometro" parent="." instance=ExtResource( 2 )]
 
 [connection signal="timeout" from="Timer_PowerUp" to="Controller" method="_on_Timer_PowerUp_timeout"]

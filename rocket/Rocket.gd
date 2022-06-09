@@ -15,9 +15,10 @@ var player = ""
 var velocity = Vector2()
 #var shake_amount = 3	# variavel nao esta sendo usada
 #var shake_speed = 0.2	# variavel nao esta sendo usada
-#var current_pos = Vector2()	# variavel nao esta sendo usada
+var last_position = Vector2()	
 #var final_pos = Vector2()	# variavel nao esta sendo usada
 var protegido = false
+var is_dashing = false
 
 var rng = RandomNumberGenerator.new()
 
@@ -131,34 +132,48 @@ func idle_state(delta):
 	#velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
 	move()
 	
-	# CORRIGIR QUANDO O PLAYER SAI DA TELA
-	position.x = wrapf(position.x, 0, screen_limit_x)
-	position.y = wrapf(position.y, 0, screen_limit_y)
-	
 func battle_state(delta):
 	pass
 	
 func dash_state(delta):
-	#print('DASH STATE')
-	velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
-	#velocity = Vector2(DASH_FORCE, 0).rotated(rotation-90)
-	DASH_FORCE = 0
-	state = IDLE
-	DIRECTION = -DIRECTION
+	if is_dashing == false:
+		is_dashing = true
+		velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
+		#velocity = Vector2(DASH_FORCE, 0).rotated(rotation-90)
+		DASH_FORCE = 0
+		
+		DIRECTION = -DIRECTION
+		charging_sprite.visible = false
+		charging_animation.play("stop")
+		sprite.offset = Vector2(0,0)	# reseta offset do sprite
+	elif is_dashing == true:
+		#print(velocity.round().abs())
+		if velocity.round().abs() < Vector2(20, 20):
+			print('parou')
+			state = IDLE
+			is_dashing = false
+		else:
+			#print("last_position: ", last_position)
+			#print("self.position : ", self.position)
+			last_position = self.position
+			velocity = velocity * 0.85
+			move()
+			#print('ainda nao parou')
 	
-	charging_sprite.visible = false
-	charging_animation.play("stop")
-	
-	sprite.offset = Vector2(0,0)	# reseta offset do sprite
 
 func move():
 	velocity = move_and_slide(velocity)
+	# CORRIGIR QUANDO O PLAYER SAI DA TELA
+	position.x = wrapf(position.x, 0, screen_limit_x)
+	position.y = wrapf(position.y, 64, screen_limit_y)
 
 func shake():
-	sprite.offset = Vector2(
+	var shake_offset = Vector2(
 		rng.randf_range(-1, 1), 
 		rng.randf_range(-1, 1)
 	)
+	sprite.offset = shake_offset
+	charging_sprite.offset = shake_offset
 	
 
 func _on_hurtboxArea_area_entered(area):
