@@ -24,6 +24,7 @@ enum powerups {
 const rocket = preload("res://rocket/Rocket.tscn")
 const battle_node = preload("res://button_batte/ButtonBattle.tscn")
 onready var powerup_escudo = preload("res://power_ups/powerup_escudo.tscn")
+onready var ui_end_level = preload("res://UI/UI_end_level.tscn")
 
 onready var level = get_node("/root/sandbox")
 onready var timer_powerup = get_node("/root/sandbox/Timer_PowerUp")
@@ -34,7 +35,7 @@ var pu_choosed
 var choose_powerup
 
 var rng = RandomNumberGenerator.new()
-var tempo_level = 20
+var tempo_level = 30
 
 signal starting_battle_controller(starter)
 signal set_ui_timer(tempo)
@@ -200,6 +201,7 @@ func pegaram_powerup(player):
 func acabou_o_level():
 	var campeao_pontos = 0
 	var campeao_player = ''
+	var ui_end = ui_end_level.instance()
 		
 	var scoreboard = []
 	for i in range(0,7):
@@ -207,7 +209,7 @@ func acabou_o_level():
 	
 	campeao_pontos = scoreboard.max()
 	if scoreboard.count(campeao_pontos) != 1:
-		print('EMPATE!')
+		ui_end.champion_text = 'Empate!'
 	else:
 		campeao_player = scoreboard.find(campeao_pontos)
 		if campeao_player == 0:
@@ -227,7 +229,9 @@ func acabou_o_level():
 		elif campeao_player == 7:
 			campeao_player = 'player8'
 		
-		print('CAMPEAO: ', campeao_player)
-		print('COM ', campeao_pontos, ' pontos')
-	
-	reset_scoreboard()
+		ui_end.champion_text = 'Campeão ' + campeao_player + ' com ' + str(campeao_pontos) + ' pontos!'
+	level.add_child(ui_end)
+
+func restart_game():
+	print('restart game')
+	get_tree().change_scene("res://sandbox.tscn")
