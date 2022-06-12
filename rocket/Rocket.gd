@@ -150,7 +150,7 @@ func dash_state(delta):
 		
 		DIRECTION = -DIRECTION
 		charging_sprite.visible = false
-		charging_animation.play("stop")
+		#charging_animation.play("stop")	#E 0:00:06.170   play: Animation not found: stop.
 		sprite.offset = Vector2(0,0)	# reseta offset do sprite
 	elif is_dashing == true:
 		#print(velocity.round().abs())

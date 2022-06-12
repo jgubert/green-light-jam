@@ -35,7 +35,7 @@ var pu_choosed
 var choose_powerup
 
 var rng = RandomNumberGenerator.new()
-var tempo_level = 30
+var tempo_level = 60
 
 signal starting_battle_controller(starter)
 signal set_ui_timer(tempo)
@@ -52,7 +52,7 @@ func reset_timer_powerup():
 	timer_powerup.set_wait_time(rng.randf_range(10, 15))
 	timer_powerup.set_one_shot(true)
 	timer_powerup.start()
-	print('Tempo ate proximo powerup: ', timer_powerup.get_wait_time())
+	#print('Tempo ate proximo powerup: ', timer_powerup.get_wait_time())
 
 func reset_scoreboard():
 	kills_list = [0,0,0,0,0,0,0,0]
@@ -204,7 +204,7 @@ func acabou_o_level():
 	var ui_end = ui_end_level.instance()
 		
 	var scoreboard = []
-	for i in range(0,7):
+	for i in range(0,8):
 		scoreboard.append(kills_list[i] - deaths_list[i])
 	
 	campeao_pontos = scoreboard.max()
@@ -233,5 +233,5 @@ func acabou_o_level():
 	level.add_child(ui_end)
 
 func restart_game():
-	print('restart game')
+	#print('restart game')
 	get_tree().change_scene("res://sandbox.tscn")
