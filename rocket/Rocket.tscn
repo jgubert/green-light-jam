@@ -7,10 +7,11 @@
 [ext_resource path="res://Assets/Charge-Sheet.png" type="Texture" id=5]
 
 [sub_resource type="RectangleShape2D" id=10]
-extents = Vector2( 11, 8 )
+extents = Vector2( 10, 7.5 )
 
-[sub_resource type="ConvexPolygonShape2D" id=11]
-points = PoolVector2Array( 0, -5, 9, 4.9, -9, 4.9 )
+[sub_resource type="CapsuleShape2D" id=15]
+radius = 11.0
+height = 8.0
 
 [sub_resource type="CapsuleShape2D" id=9]
 radius = 11.0
@@ -156,19 +157,22 @@ script = ExtResource( 2 )
 texture = ExtResource( 3 )
 
 [node name="pointing" type="Position2D" parent="."]
-position = Vector2( 0, -19 )
+position = Vector2( 0, -16 )
+
+[node name="back" type="Position2D" parent="."]
+position = Vector2( 0, 16 )
 
 [node name="hurtboxArea" type="Area2D" parent="."]
 
 [node name="hurtbox" type="CollisionShape2D" parent="hurtboxArea"]
-position = Vector2( 0, 3 )
+position = Vector2( 0, 2.5 )
 shape = SubResource( 10 )
+disabled = true
 
 [node name="hitboxArea" type="Area2D" parent="."]
 
 [node name="hitbox" type="CollisionShape2D" parent="hitboxArea"]
-position = Vector2( 0, -11 )
-shape = SubResource( 11 )
+shape = SubResource( 15 )
 
 [node name="get_powerup" type="Area2D" parent="."]
 visible = false

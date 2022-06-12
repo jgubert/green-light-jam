@@ -27,6 +27,7 @@ var enemy
 
 # variaveis com os nodes do rocket
 onready var target = $pointing
+onready var rocket_back =$back
 onready var sprite = $Sprite
 onready var collision_shape = $CollisionShape2D
 onready var hurtbox = $hurtboxArea/hurtbox
@@ -140,6 +141,11 @@ func dash_state(delta):
 		is_dashing = true
 		velocity = position.direction_to(target.get_global_position()) * DASH_FORCE
 		#velocity = Vector2(DASH_FORCE, 0).rotated(rotation-90)
+		#var deg = rad2deg(velocity.angle())
+		#var rad = velocity.angle()
+		#print('deg> ', deg)
+		#print('\tcos> ', cos(rad))
+		#print('\tsin> ', sin(rad))
 		DASH_FORCE = 0
 		
 		DIRECTION = -DIRECTION
@@ -148,8 +154,8 @@ func dash_state(delta):
 		sprite.offset = Vector2(0,0)	# reseta offset do sprite
 	elif is_dashing == true:
 		#print(velocity.round().abs())
-		if velocity.round().abs() < Vector2(20, 20):
-			print('parou')
+		if velocity.round().abs() < Vector2(40, 40):
+			#print('parou')
 			state = IDLE
 			is_dashing = false
 		else:
@@ -176,10 +182,12 @@ func shake():
 	charging_sprite.offset = shake_offset
 	
 
-func _on_hurtboxArea_area_entered(area):
-	#print('HURTBOX ', player, ' ENTERED: ', area.name)	# DEBUG
-	if area.name == 'hitboxArea' and !protegido:
-		explode()
+
+#func _on_hurtboxArea_area_entered(area):
+#	#print('HURTBOX ', player, ' ENTERED: ', area.name)	# DEBUG
+#	if area.name == 'hitboxArea' and !protegido:
+#		explode()
+
 
 func explode():
 	sprite.visible = false # desativa sprite nave
@@ -193,20 +201,30 @@ func explode():
 	$"Boom-Sheet".visible = true #ativa sprite explosão
 	animation_player.play("Death")
 	death_timer.start()
-	
+
 func _on_hitboxArea_area_entered(area):
-	#print(area.name, protegido)
 	enemy = area.get_parent()
-	if area.name == 'hitboxArea' and !protegido and !enemy.protegido:
+	#print('Colisao: ', player, ' com ', enemy.player, '\tArea: ', area)
+	#print('\tplayer: protegido > ', protegido, '\tis_dashing > ', is_dashing)
+	#print('\tenemy: protegido > ', enemy.protegido, '\tis_dashing > ', enemy.is_dashing)
+	#var teste = rad2deg(Vector2(velocity.x + enemy.velocity.x , velocity.y + enemy.velocity.y ).angle())
+	var seno = sin(velocity.angle()) + sin(enemy.velocity.angle())
+	var coss = cos(velocity.angle()) + cos(enemy.velocity.angle())
+	#print('self angle: ', velocity.angle(),'\tenemy angle: ', enemy.velocity.angle())
+	#print('seno: ', seno, '\tself seno: ', sin(velocity.angle()), '\tenemy_seno: ', sin(enemy.velocity.angle()))
+	#print('cosseno: ', coss, '\tself coss: ', cos(velocity.angle()), '\tenemy_coss: ', cos(enemy.velocity.angle()))
+	if !protegido and !enemy.protegido and enemy.is_dashing and is_dashing and (abs(coss) < 0.2 or abs(seno) < 0.2):
+		#print('COLISAO DE BATALHA')
+		#print('distancia: ', Vector2(target.get_global_position()).distance_to(Vector2(enemy.target.get_global_position())))
 		enemy = area.get_parent()
 		if enemy != null:
 			emit_signal("entering_battle")
 			state = BATTLE
-			print(player, ' entrou em batalha.')
-	elif area.name == 'hitboxArea' and protegido:
+			#print(player, ' entrou em batalha.')
+	elif protegido or (!enemy.is_dashing and is_dashing and !enemy.protegido):
+		#print('CRASH: DE FRENTE COM INIMIGO PARADO / OU ESTOU PROTEGIDO')
 		emit_signal("player_matou")
-	if area.name == 'hurtboxArea':
-		emit_signal("player_matou")
+		enemy.explode()
 		
 func result_battle(result):
 	if result == "lose":

@@ -23,6 +23,7 @@ signal acabou_o_tempo()
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	timer.set_wait_time(tempo_level)
+	timer.set_one_shot(true)
 	timer.start()
 	connect("acabou_o_tempo", controller, "acabou_o_level")
 

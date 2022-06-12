@@ -53,6 +53,10 @@ func reset_timer_powerup():
 	timer_powerup.start()
 	print('Tempo ate proximo powerup: ', timer_powerup.get_wait_time())
 
+func reset_scoreboard():
+	kills_list = [0,0,0,0,0,0,0,0]
+	deaths_list = [0,0,0,0,0,0,0,0]
+
 func _process(delta):
 	# Se nao existe o jogador, entao cria
 	if Input.is_action_just_pressed("player1") and !flag_player_alive[0]:
@@ -134,7 +138,7 @@ func get_rocket_deaths(player_dead):
 		#print('player explosion error')	# DEBUG
 		pass
 	
-	debug_placar()
+	#debug_placar()
 	emit_signal("atualiza_placar")
 
 func get_rocket_kill(killer):
@@ -194,33 +198,36 @@ func pegaram_powerup(player):
 		reset_timer_powerup()
 	
 func acabou_o_level():
-	print("ACABOU O LEVEL")
 	var campeao_pontos = 0
 	var campeao_player = ''
-	if campeao_pontos < (kills_list[0] - deaths_list[0]):
-		campeao_pontos = kills_list[0] - deaths_list[0]
-		campeao_player = 'player1'
-	elif campeao_pontos < (kills_list[1] - deaths_list[1]):
-		campeao_pontos = kills_list[1] - deaths_list[1]
-		campeao_player = 'player2'
-	elif campeao_pontos < (kills_list[2] - deaths_list[2]):
-		campeao_pontos = kills_list[2] - deaths_list[2]
-		campeao_player = 'player3'
-	elif campeao_pontos < (kills_list[3] - deaths_list[3]):
-		campeao_pontos = kills_list[3] - deaths_list[3]
-		campeao_player = 'player4'
-	elif campeao_pontos < (kills_list[4] - deaths_list[4]):
-		campeao_pontos = kills_list[4] - deaths_list[4]
-		campeao_player = 'player5'
-	elif campeao_pontos < (kills_list[5] - deaths_list[5]):
-		campeao_pontos = kills_list[5] - deaths_list[5]
-		campeao_player = 'player6'
-	elif campeao_pontos < (kills_list[6] - deaths_list[6]):
-		campeao_pontos = kills_list[6] - deaths_list[6]
-		campeao_player = 'player7'
-	elif campeao_pontos < (kills_list[7] - deaths_list[7]):
-		campeao_pontos = kills_list[7] - deaths_list[7]
-		campeao_player = 'player8'
 		
-	print('CAMPEAO: ', campeao_player)
-	print('COM ', campeao_pontos, ' pontos')
+	var scoreboard = []
+	for i in range(0,7):
+		scoreboard.append(kills_list[i] - deaths_list[i])
+	
+	campeao_pontos = scoreboard.max()
+	if scoreboard.count(campeao_pontos) != 1:
+		print('EMPATE!')
+	else:
+		campeao_player = scoreboard.find(campeao_pontos)
+		if campeao_player == 0:
+			campeao_player = 'player1'
+		elif campeao_player == 1:
+			campeao_player = 'player2'
+		elif campeao_player == 2:
+			campeao_player = 'player3'
+		elif campeao_player == 3:
+			campeao_player = 'player4'
+		elif campeao_player == 4:
+			campeao_player = 'player5'
+		elif campeao_player == 5:
+			campeao_player = 'player6'
+		elif campeao_player == 6:
+			campeao_player = 'player7'
+		elif campeao_player == 7:
+			campeao_player = 'player8'
+		
+		print('CAMPEAO: ', campeao_player)
+		print('COM ', campeao_pontos, ' pontos')
+	
+	reset_scoreboard()

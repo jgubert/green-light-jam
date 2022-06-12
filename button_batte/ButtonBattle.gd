@@ -35,12 +35,12 @@ func _process(delta):
 		if Input.is_action_just_pressed(fighter_1.player):
 			points_f1 = points_f1 + 1
 			points_f2 = points_f2 - 1
-			print_battle_debug()
+			#print_battle_debug()
 	if is_instance_valid(fighter_2):
 		if Input.is_action_just_pressed(fighter_2.player):
 			points_f1 = points_f1 - 1
 			points_f2 = points_f2 + 1
-			print_battle_debug()
+			#print_battle_debug()
 	
 	if points_f1 == 0:
 		connect("loser",fighter_1, "result_battle", ["lose"])
