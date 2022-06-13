@@ -55,5 +55,6 @@ margin_right = 130.0
 margin_bottom = 170.0
 custom_fonts/font = SubResource( 3 )
 text = "Restart"
+flat = true
 
 [connection signal="pressed" from="CenterContainer/Panel/VSplitContainer/Button" to="." method="_on_Button_pressed"]

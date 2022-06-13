@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="green-light-jam"
-run/main_scene="res://sandbox.tscn"
+run/main_scene="res://UI/StartMenu.tscn"
 config/icon="res://icon.png"
 
 [display]
