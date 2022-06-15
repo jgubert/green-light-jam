@@ -21,6 +21,9 @@ font_data = ExtResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 2 )
+__meta__ = {
+"_edit_horizontal_guides_": [ 251.0 ]
+}
 
 [node name="CenterContainer" type="PanelContainer" parent="."]
 margin_left = 220.0
@@ -49,6 +52,8 @@ align = 1
 autowrap = true
 
 [node name="Button" type="Button" parent="CenterContainer/Panel/VSplitContainer"]
+anchor_left = 0.255
+anchor_right = 0.255
 margin_left = 60.0
 margin_top = 150.0
 margin_right = 130.0
@@ -57,4 +62,23 @@ custom_fonts/font = SubResource( 3 )
 text = "Restart"
 flat = true
 
+[node name="Back" type="Button" parent="CenterContainer/Panel/VSplitContainer"]
+anchor_left = -0.66
+anchor_top = -0.75
+anchor_right = -0.51
+anchor_bottom = -0.75
+margin_left = 135.4
+margin_top = 300.0
+margin_right = 205.4
+margin_bottom = 320.0
+custom_fonts/font = SubResource( 3 )
+toggle_mode = true
+text = "Menu Inicial"
+flat = true
+
+[connection signal="mouse_entered" from="CenterContainer/Panel/VSplitContainer/Button" to="." method="_on_Button_mouse_entered"]
+[connection signal="mouse_exited" from="CenterContainer/Panel/VSplitContainer/Button" to="." method="_on_Button_mouse_exited"]
 [connection signal="pressed" from="CenterContainer/Panel/VSplitContainer/Button" to="." method="_on_Button_pressed"]
+[connection signal="mouse_entered" from="CenterContainer/Panel/VSplitContainer/Back" to="." method="_on_Back_mouse_entered"]
+[connection signal="mouse_exited" from="CenterContainer/Panel/VSplitContainer/Back" to="." method="_on_Back_mouse_exited"]
+[connection signal="pressed" from="CenterContainer/Panel/VSplitContainer/Back" to="." method="_on_Back_pressed"]
