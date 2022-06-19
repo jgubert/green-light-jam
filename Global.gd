@@ -30,3 +30,9 @@ func set_game_binds():
 		var new_key = InputEventKey.new()
 		new_key.set_scancode(value)
 		InputMap.action_add_event(key, new_key)
+
+func write_config():
+	for key in keybinds.keys():
+		var key_value = keybinds[key]
+		configfile.set_value("keybinds", key, key_value)
+	configfile.save(filepath)
