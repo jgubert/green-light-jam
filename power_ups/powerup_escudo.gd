@@ -24,6 +24,8 @@ func _ready():
 		collisionshape.disabled = false
 
 func _on_powerup_area_area_entered(area):
+	$"Sprite2".visible = false
+	$"Sprite".visible = true
 	#print(area.name)
 	player_que_pegou = area.get_parent()
 	#print(player)
