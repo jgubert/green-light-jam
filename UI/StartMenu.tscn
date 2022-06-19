@@ -47,12 +47,12 @@ custom_fonts/font = SubResource( 1 )
 text = "Space"
 
 [node name="Clash" type="Label" parent="."]
-margin_left = 284.0
+margin_left = 281.0
 margin_top = 107.0
-margin_right = 424.0
+margin_right = 421.0
 margin_bottom = 153.0
 custom_fonts/font = SubResource( 1 )
-text = "Clash"
+text = "Clash!"
 
 [node name="VSplitContainer" type="VBoxContainer" parent="."]
 margin_left = 263.0
