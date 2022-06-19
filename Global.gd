@@ -14,8 +14,8 @@ func _ready():
 			
 			keybinds[key] = key_value
 	else:
-		print("CONFIG FILE NOT FOUND")
-		get_tree().quit()
+		generate_default_binds()
+		write_config()
 	
 	set_game_binds()
 	
@@ -36,3 +36,13 @@ func write_config():
 		var key_value = keybinds[key]
 		configfile.set_value("keybinds", key, key_value)
 	configfile.save(filepath)
+
+func generate_default_binds():
+	keybinds["player1"] = 65
+	keybinds["player2"] = 83
+	keybinds["player3"] = 68
+	keybinds["player4"] = 70
+	keybinds["player5"] = 90
+	keybinds["player6"] = 88
+	keybinds["player7"] = 67
+	keybinds["player8"] = 86
